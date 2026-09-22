@@ -160,6 +160,74 @@ document.addEventListener("DOMContentLoaded", () => {
         ocultarUltimoElemento();
     }
 
+    // F8 - HABILITAR EDICIÓN
 
+    function habilitarEdicion() {
+
+        textarea.removeAttribute("readonly");
+
+        textarea.disabled = false;
+
+        textarea.focus();
+
+        console.log("Edición habilitada");
+    }
+
+    // F9 - REINICIAR RULETA
+
+    function reiniciarRuleta() {
+
+        elementosOcultos = [];
+
+        ultimoElementoSeleccionado = null;
+
+        const elementos = obtenerElementos();
+
+        if (typeof window.actualizarRuleta === "function") {
+
+            window.actualizarRuleta(elementos);
+
+        } else {
+
+            document.dispatchEvent(
+                new CustomEvent("ruletaReiniciada", {
+                    detail: {
+                        elementos: elementos
+                    }
+                })
+            );
+        }
+
+        console.log("Ruleta reiniciada");
+    }
+
+    // F9 - PANTALLA COMPLETA
+
+    function activarPantallaCompleta() {
+
+        const elementoPantalla =
+            document.documentElement;
+
+        if (!document.fullscreenElement) {
+
+            elementoPantalla.requestFullscreen()
+                .then(() => {
+                    console.log("Pantalla completa activada");
+                })
+                .catch(error => {
+                    console.error(
+                        "No se pudo activar pantalla completa:",
+                        error
+                    );
+                });
+
+        } else {
+
+            document.exitFullscreen()
+                .then(() => {
+                    console.log("Pantalla completa desactivada");
+                });
+        }
+    }
    
 });
