@@ -9,6 +9,23 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <style>
+      /* Transición para el giro de la ruleta */
+      #wheel-canvas {
+        transition: transform 4s cubic-bezier(0.15, 0.9, 0.25, 1);
+        transform-origin: center center;
+        cursor: pointer;
+      }
+      /* La flecha y el botón central quedan fijos */
+      .pointer,
+      .center-pill {
+        z-index: 2;
+      }
+      /* Ocultar input file */
+      #inputArchivo {
+        display: none;
+      }
+    </style>
   </head>
   <body>
     <div class="app-container">
@@ -66,7 +83,6 @@
             </h2>
           </div>
 
-          <!-- TEXTAREA requerido por editor.js -->
           <textarea
             id="listaElementos"
             class="items-list"
@@ -85,14 +101,12 @@
 11
 12</textarea>
 
-          <!-- Botones de acción -->
           <div class="sidebar-buttons">
             <button class="btn-sidebar" id="btnTitulo">Título</button>
             <button class="btn-sidebar" id="btnEditar">Editar</button>
             <button class="btn-sidebar" id="btnOcultar">esconder...</button>
           </div>
 
-          <!-- Atajos de teclado -->
           <div class="shortcuts">
             <h3>ATAJOS DE TECLADO</h3>
             <ul>
@@ -107,12 +121,11 @@
       </main>
     </div>
 
+    <!-- Input oculto para cargar archivos -->
+    <input type="file" id="inputArchivo" accept=".txt,.csv,.json" />
+
     <!-- ============================================================
-         DIBUJO BÁSICO DE LA RULETA
-         Define window.actualizarRuleta y window.girarRuleta
-         para que editor.js las use automáticamente.
-         Cuando el compañero suba js/ruleta.js, este bloque se puede
-         reemplazar por ese archivo.
+         RULETA: DIBUJO + GIRO ANIMADO
     ============================================================ -->
     <script>
       const canvas = document.getElementById("wheel-canvas");
@@ -125,6 +138,9 @@
         "#a78bfa",
         "#f472b6",
       ];
+
+      let anguloActual = 0; // grados
+      let girando = false;
 
       function dibujarRuleta(elementos) {
         const lista =
@@ -168,13 +184,15 @@
         if (badge) badge.textContent = segmentos;
       }
 
-      // Exponer para editor.js (F6, F7, F9)
+      // editor.js llamará a esta función (F6 y F9)
       window.actualizarRuleta = function (elementos) {
         dibujarRuleta(elementos);
       };
 
-      // Giro aleatorio simple (se puede reemplazar por la versión animada)
+      // Giro animado con CSS transition
       window.girarRuleta = function () {
+        if (girando) return;
+
         const elementos = window.editorRuleta
           ? window.editorRuleta.obtenerElementos()
           : [];
@@ -185,15 +203,37 @@
           return;
         }
 
-        const ganador =
-          elementos[Math.floor(Math.random() * elementos.length)];
+        girando = true;
 
-        document.getElementById("respuesta").textContent = ganador;
+        const segmentos = elementos.length;
+        const anguloPorSegmento = 360 / segmentos;
+        const indiceGanador = Math.floor(Math.random() * segmentos);
+        const centroSector =
+          indiceGanador * anguloPorSegmento + anguloPorSegmento / 2;
+        const vueltas = 5 + Math.floor(Math.random() * 3);
 
-        // Avisar al editor.js quién fue el último sorteado (F7)
-        if (typeof window.registrarElementoSeleccionado === "function") {
-          window.registrarElementoSeleccionado(ganador);
-        }
+        const anguloFinal =
+          anguloActual +
+          vueltas * 360 +
+          (360 - centroSector) -
+          (anguloActual % 360);
+
+        anguloActual = anguloFinal;
+        canvas.style.transform = `rotate(${anguloActual}deg)`;
+
+        const alTerminar = () => {
+          canvas.removeEventListener("transitionend", alTerminar);
+          girando = false;
+
+          const ganador = elementos[indiceGanador];
+          document.getElementById("respuesta").textContent = ganador;
+
+          if (typeof window.registrarElementoSeleccionado === "function") {
+            window.registrarElementoSeleccionado(ganador);
+          }
+        };
+
+        canvas.addEventListener("transitionend", alTerminar, { once: true });
       };
 
       // Dibujo inicial
@@ -206,7 +246,7 @@
     <script src="editor.js"></script>
 
     <!-- ============================================================
-         CONEXIÓN DE BOTONES Y TECLAS CON LAS FUNCIONES DE editor.js
+         CONEXIÓN DE BOTONES, TECLAS Y FUNCIONALIDAD "ARCHIVOS"
     ============================================================ -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -219,73 +259,166 @@
         const btnOcultar = document.getElementById("btnOcultar");
         const spinButton = document.getElementById("spin-button");
         const respuesta = document.getElementById("respuesta");
+        const inputArchivo = document.getElementById("inputArchivo");
+        const textarea = document.getElementById("listaElementos");
 
-        // INICIAR / CLICK EN RULETA → girar
-        if (btnIniciar) {
-          btnIniciar.addEventListener("click", () => window.girarRuleta());
-        }
-        if (spinButton) {
-          spinButton.addEventListener("click", () => window.girarRuleta());
-        }
-        if (canvas) {
-          canvas.addEventListener("click", () => window.girarRuleta());
-        }
+        /* ---------- INICIAR / CLICK / SPACE ---------- */
+        btnIniciar?.addEventListener("click", () => window.girarRuleta());
+        spinButton?.addEventListener("click", () => window.girarRuleta());
+        canvas?.addEventListener("click", () => window.girarRuleta());
 
-        // REINICIAR → editor.js
-        if (btnReiniciar) {
-          btnReiniciar.addEventListener("click", () => {
-            window.editorRuleta.reiniciarRuleta();
-            if (respuesta) respuesta.textContent = "¿Preparado?";
-          });
-        }
-
-        // EDITAR → editor.js
-        if (btnEditar) {
-          btnEditar.addEventListener("click", () => {
-            window.editorRuleta.habilitarEdicion();
-          });
-        }
-
-        // ESCONDER → editor.js
-        if (btnOcultar) {
-          btnOcultar.addEventListener("click", () => {
-            window.editorRuleta.ocultarUltimoElemento();
-          });
-        }
-
-        // PANTALLA COMPLETA → editor.js
-        if (btnPantallaCompleta) {
-          btnPantallaCompleta.addEventListener("click", () => {
-            window.editorRuleta.activarPantallaCompleta();
-          });
-        }
-
-        // TÍTULO → cambia el <h1>
-        if (btnTitulo) {
-          btnTitulo.addEventListener("click", () => {
-            const nuevo = prompt("Nuevo título:", "Ruleta Aleatoria");
-            if (nuevo) {
-              document.getElementById("tituloRuleta").textContent = nuevo;
-            }
-          });
-        }
-
-        // ARCHIVOS → placeholder (puedes hacer lo que quieras aquí)
-        if (btnArchivos) {
-          btnArchivos.addEventListener("click", () => {
-            alert("Aquí iría el manejo de archivos.");
-          });
-        }
-
-        // SPACE → girar (evitando cuando se escribe en el textarea)
         document.addEventListener("keydown", (e) => {
           const editando =
-            document.activeElement &&
-            document.activeElement.id === "listaElementos";
-
+            document.activeElement && document.activeElement.id === "listaElementos";
           if (e.code === "Space" && !editando) {
             e.preventDefault();
             window.girarRuleta();
+          }
+        });
+
+        /* ---------- REINICIAR ---------- */
+        btnReiniciar?.addEventListener("click", () => {
+          window.editorRuleta.reiniciarRuleta();
+          anguloActual = 0;
+          canvas.style.transform = "rotate(0deg)";
+          respuesta.textContent = "¿Preparado?";
+        });
+
+        /* ---------- EDITAR ---------- */
+        btnEditar?.addEventListener("click", () => {
+          window.editorRuleta.habilitarEdicion();
+        });
+
+        /* ---------- ESCONDER ---------- */
+        btnOcultar?.addEventListener("click", () => {
+          window.editorRuleta.ocultarUltimoElemento();
+        });
+
+        /* ---------- PANTALLA COMPLETA ---------- */
+        btnPantallaCompleta?.addEventListener("click", () => {
+          window.editorRuleta.activarPantallaCompleta();
+        });
+
+        /* ---------- TÍTULO ---------- */
+        btnTitulo?.addEventListener("click", () => {
+          const nuevo = prompt("Nuevo título:", "Ruleta Aleatoria");
+          if (nuevo) {
+            document.getElementById("tituloRuleta").textContent = nuevo;
+          }
+        });
+
+        /* ---------- ARCHIVOS ---------- */
+        btnArchivos?.addEventListener("click", () => {
+          // Menú simple con las 3 opciones
+          const opcion = prompt(
+            "¿Qué deseas hacer?\n\n" +
+              "1 = Cargar elementos desde archivo (.txt / .csv / .json)\n" +
+              "2 = Guardar elementos actuales en un archivo .txt\n" +
+              "3 = Descargar la ruleta como imagen PNG\n\n" +
+              "Escribe 1, 2 o 3:",
+            "1"
+          );
+
+          if (opcion === "1") {
+            inputArchivo.click();
+          } else if (opcion === "2") {
+            guardarElementosComoArchivo();
+          } else if (opcion === "3") {
+            descargarRuletaComoImagen();
+          }
+        });
+
+        /* ---------- CARGAR ARCHIVO ---------- */
+        inputArchivo?.addEventListener("change", (e) => {
+          const archivo = e.target.files[0];
+          if (!archivo) return;
+
+          const lector = new FileReader();
+          lector.onload = (ev) => {
+            const contenido = ev.target.result;
+
+            let elementos = [];
+
+            if (archivo.name.endsWith(".json")) {
+              try {
+                const data = JSON.parse(contenido);
+                elementos = Array.isArray(data)
+                  ? data
+                  : String(data).split(/\r?\n/);
+              } catch (err) {
+                alert("El archivo JSON no es válido.");
+                return;
+              }
+            } else {
+              // .txt o .csv → separar por líneas o comas
+              elementos = contenido
+                .split(/\r?\n|,/)
+                .map((x) => x.trim())
+                .filter((x) => x !== "");
+            }
+
+            textarea.value = elementos.join("\n");
+
+            // Dispara el input para que editor.js actualice la ruleta
+            textarea.dispatchEvent(new Event("input"));
+
+            alert(`Se cargaron ${elementos.length} elementos.`);
+            inputArchivo.value = "";
+          };
+
+          lector.readAsText(archivo);
+        });
+
+        /* ---------- GUARDAR COMO .TXT ---------- */
+        function guardarElementosComoArchivo() {
+          const contenido = textarea.value || "";
+          if (!contenido.trim()) {
+            alert("No hay elementos para guardar.");
+            return;
+          }
+
+          const blob = new Blob([contenido], { type: "text/plain;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "elementos-ruleta.txt";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+
+        /* ---------- DESCARGAR RULETA COMO PNG ---------- */
+        function descargarRuletaComoImagen() {
+          // Crear un canvas temporal con fondo blanco
+          const temp = document.createElement("canvas");
+          temp.width = canvas.width;
+          temp.height = canvas.height;
+          const tctx = temp.getContext("2d");
+
+          tctx.fillStyle = "#ffffff";
+          tctx.fillRect(0, 0, temp.width, temp.height);
+          tctx.drawImage(canvas, 0, 0);
+
+          const url = temp.toDataURL("image/png");
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "ruleta.png";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
+
+        /* ---------- TECLAS GLOBALES EXTRA ---------- */
+        document.addEventListener("keydown", (e) => {
+          const editando =
+            document.activeElement && document.activeElement.id === "listaElementos";
+          if (editando) return;
+
+          // A = Archivos
+          if (e.key.toLowerCase() === "a") {
+            e.preventDefault();
+            btnArchivos?.click();
           }
         });
       });
