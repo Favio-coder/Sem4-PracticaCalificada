@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ruleta Aleatoria</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Iconos para que se vea como la imagen -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- HEADER -->
+      <header class="header">
+        <div class="header-left">
+          <div class="logo-icon"><i class="fa-solid fa-dharmachakra"></i></div>
+          <div class="title-group">
+            <h1>Ruleta Aleatoria</h1>
+            <p>Selector dinámico y descargable</p>
+          </div>
+        </div>
+
+        <div class="result-area">
+          <span class="result-label">RESPUESTA:</span>
+          <span class="winner-text">¿Preparado?</span>
+          <i class="fa-solid fa-bell result-icon"></i>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn btn-primary">
+            <i class="fa-solid fa-play"></i> Iniciar
+          </button>
+          <button class="btn btn-danger">
+            <i class="fa-solid fa-rotate-right"></i> Reiniciar
+          </button>
+          <button class="btn btn-dark">
+            <i class="fa-solid fa-folder"></i> Archivos
+          </button>
+          <button class="btn btn-icon">
+            <i class="fa-solid fa-expand"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- CONTENIDO PRINCIPAL -->
+      <main class="main-content">
+        <!-- COLUMNA IZQUIERDA: RULETA -->
+        <section class="wheel-stage">
+          <!-- El canvas simula la ruleta -->
+          <canvas id="wheel-canvas" width="500" height="500"></canvas>
+
+          <!-- Flecha roja indicadora -->
+          <div class="pointer"></div>
+
+          <!-- Botón central -->
+          <div class="center-pill" id="spin-button">haz clic para girarlo</div>
+
+          <!-- Texto inferior -->
+          <div class="bottom-hint">
+            Pulsa <span class="key-badge">ESPACIO</span> o haz clic sobre la
+            ruleta para sortear
+          </div>
+        </section>
+
+        <!-- COLUMNA DERECHA: SIDEBAR -->
+        <aside class="sidebar">
+          <div class="sidebar-header">
+            <h2>ELEMENTOS EN RULETA <span class="badge">12</span></h2>
+            <a href="#" class="link-shuffle">Mezclar</a>
+          </div>
+
+          <!-- Lista de elementos -->
+          <div class="items-list">
+            <div class="item">1</div>
+            <div class="item">2</div>
+            <div class="item">3</div>
+            <div class="item">4</div>
+            <div class="item">5</div>
+            <div class="item">6</div>
+            <div class="item">7</div>
+            <div class="item">8</div>
+            <div class="item">9</div>
+            <div class="item">10</div>
+            <div class="item">11</div>
+            <div class="item">12</div>
+          </div>
+
+          <!-- Botones de acción -->
+          <div class="sidebar-buttons">
+            <button class="btn-sidebar">Título</button>
+            <button class="btn-sidebar">Editar</button>
+            <button class="btn-sidebar">esconder...</button>
+          </div>
+
+          <!-- Atajos de teclado -->
+          <div class="shortcuts">
+            <h3>ATAJOS DE TECLADO</h3>
+            <ul>
+              <li><span class="key">SPACE</span> Gíralo</li>
+              <li>
+                <span class="key">S</span> Ocultar el elemento seleccionado
+              </li>
+              <li><span class="key">R</span> Reiniciar</li>
+              <li><span class="key">E</span> Editar</li>
+              <li><span class="key">F</span> Pantalla completa</li>
+            </ul>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <script>
+      // Script básico para simular el giro visual (opcional)
+      const canvas = document.getElementById("wheel-canvas");
+      const ctx = canvas.getContext("2d");
+      const colors = [
+        "#60a5fa",
+        "#f87171",
+        "#fbbf24",
+        "#34d399",
+        "#a78bfa",
+        "#f472b6",
+      ];
+      const segments = 12;
+      const anglePerSegment = (2 * Math.PI) / segments;
+
+      // Dibujar ruleta simple para que se vea visualmente
+      function drawWheel() {
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = canvas.width / 2 - 10;
+
+        for (let i = 0; i < segments; i++) {
+          const startAngle = i * anglePerSegment;
+          const endAngle = startAngle + anglePerSegment;
+
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY);
+          ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+          ctx.closePath();
+          ctx.fillStyle = colors[i % colors.length];
+          ctx.fill();
+          ctx.strokeStyle = "#fff";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Texto
+          ctx.save();
+          ctx.translate(centerX, centerY);
+          ctx.rotate(startAngle + anglePerSegment / 2);
+          ctx.textAlign = "right";
+          ctx.fillStyle = "#1e293b";
+          ctx.font = "bold 20px sans-serif";
+          ctx.fillText(i + 1, radius - 20, 8);
+          ctx.restore();
+        }
+      }
+      drawWheel();
+    </script>
+  </body>
+</html>
