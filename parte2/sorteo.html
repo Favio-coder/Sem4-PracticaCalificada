@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sorteo (Alumno 4)</title>
+    <style>
+      body {
+        font-family:
+          Segoe UI,
+          Arial,
+          sans-serif;
+        max-width: 720px;
+        margin: 40px auto;
+        color: #1c1b29;
+      }
+      textarea {
+        width: 100%;
+        height: 160px;
+      }
+      .oculta {
+        display: none;
+      }
+      .activa {
+        display: block;
+      }
+      .tarjeta-equipo {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 10px 0;
+      }
+      .subtitulo-equipo {
+        font-weight: bold;
+        color: #9c1560;
+      }
+      .lista-integrantes {
+        list-style: none;
+        padding: 0;
+      }
+      .lista-integrantes li {
+        padding: 4px 0;
+      }
+      .error {
+        color: #b3261e;
+        font-size: 13px;
+      }
+      button {
+        cursor: pointer;
+        padding: 8px 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Sorteo — Alumno 4</h2>
+    <p>
+      Esto NO es el index.html final del equipo, solo replica los IDs del
+      contrato para probar tu lógica sin depender de tus compañeros.
+    </p>
+
+    <section id="pantallaConfiguracionSorteo">
+      <h3>1. Participantes</h3>
+      <textarea
+        id="areaParticipantes"
+        placeholder="Un nombre por línea"
+      ></textarea>
+      <p>Contador: <span id="contadorParticipantes">0</span></p>
+      <p class="error" id="avisoLimiteSorteo"></p>
+
+      <h3>2. Modo</h3>
+      <label
+        ><input type="radio" name="modo" id="modoCantidadEquipos" checked />
+        Cantidad de equipos</label
+      >
+      <label
+        ><input type="radio" name="modo" id="modoParticipantesPorEquipo" />
+        Participantes por equipo</label
+      >
+      <br /><br />
+      <select id="selectorCantidadEquipos"></select>
+      <br /><br />
+      <input type="text" id="tituloEquipos" placeholder="Título del sorteo" />
+
+      <p class="error" id="mensajeErrorSorteo"></p>
+
+      <br />
+      <button id="botonLimpiarSorteo" type="button">Limpiar</button>
+      <button id="botonGenerarEquipos" type="button">Generar equipos</button>
+    </section>
+
+    <section id="pantallaResultadosSorteo" class="oculta">
+      <h3 id="tituloRenderizadoSorteo"></h3>
+      <p id="subtituloResultadosSorteo"></p>
+      <div id="rejillaEquiposSorteo"></div>
+      <button id="botonVolverSorteo" type="button">← Volver</button>
+    </section>
+
+    <script src="sorteo.js"></script>
+  </body>
+</html>
