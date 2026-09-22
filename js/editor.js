@@ -232,9 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     
 
-    // ========================================================
     // F7 - REGISTRAR ÚLTIMO ELEMENTO SORTEADO
-    // ========================================================
 
     function registrarElementoSeleccionado(elemento) {
 
@@ -250,9 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
-    // ========================================================
     // F7 - OCULTAR ELEMENTO SORTEADO
-    // ========================================================
 
     function ocultarUltimoElemento() {
 
@@ -276,9 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
-    // ========================================================
     // F7 - ACTUALIZAR ELEMENTOS DISPONIBLES
-    // ========================================================
 
     function actualizarElementosDisponibles() {
 
