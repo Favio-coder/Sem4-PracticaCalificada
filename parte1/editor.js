@@ -301,10 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ========================================================
     // F7 - TECLA S
-    // ========================================================
-
     function procesarTeclaS() {
 
         ocultarUltimoElemento();
