@@ -1,11 +1,118 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practica Calificada 3</title>
-</head>
-<body>
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <title>Práctica Calificada 3</title>
+  </head>
+
+  <body class="min-h-screen bg-white text-black">
+    <main id="inicio" class="min-h-screen flex items-center justify-center p-6">
+      <div class="w-full max-w-4xl">
+        <div class="text-center mb-12">
+          <h1 class="text-5xl font-bold mb-4">Aplicación Web (Aula Virtual)</h1>
+
+          <p class="text-lg">Práctica Calificada 3 (Sorteo y Ruleta)</p>
+        </div>
+
+        <!-- LAYOUTS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <section class="shadow-xl border rounded-2xl p-8 text-center">
+            <h2 class="text-2xl font-bold mb-3">Parte 1</h2>
+
+            <p class="text-slate-400 mb-6">
+              Accede a la primera parte de la práctica (Ruleta)
+            </p>
+
+            <button
+              id="btnParte1"
+              class="text-white w-full bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-lg font-semibold transition cursor-pointer"
+            >
+              Ir a Parte 1
+            </button>
+          </section>
+
+          <!-- PARTE 2 -->
+          <section class="shadow-xl border rounded-2xl p-8 text-center">
+            <h2 class="text-2xl font-bold mb-3">Parte 2</h2>
+
+            <p class="text-slate-400 mb-6">
+              Accede a la segunda parte de la práctica (Sorteo)
+            </p>
+
+            <button
+              id="btnParte2"
+              class="text-white w-full bg-purple-600 hover:bg-purple-500 px-6 py-3 rounded-lg font-semibold transition cursor-pointer"
+            >
+              Ir a Parte 2
+            </button>
+          </section>
+        </div>
+
+        <!-- BOTONES INFERIORES -->
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+          <button
+            id="btnFullscreen"
+            class="text-white bg-blue-500 hover:bg-blue-700 border shadow-xl px-6 py-3 rounded-lg font-semibold transition cursor-pointer"
+          >
+            Pantalla completa
+          </button>
+
+          <!-- <button
+            id="btnSorteo"
+            class="text-white bg-emerald-600 hover:bg-emerald-500 px-6 py-3 rounded-lg font-semibold transition cursor-pointer"
+          >
+            Sorteo
+          </button> -->
+        </div>
+
+        <!-- <p class="text-center text-slate-500 text-sm mt-6">
+                Atajo de teclado: <span class="text-white font-semibold">F4</span> → Sorteo
+            </p> -->
+      </div>
+    </main>
+
+    <footer class="bg-blue-700 text-white mt-10">
+      <div class="max-w-6xl mx-auto px-6 py-8">
+        <div
+          class="flex flex-col md:flex-row justify-between items-center gap-6"
+        >
+
+          <div class="text-center md:text-left">
+            <h2 class="text-xl font-bold">Aplicación Web</h2>
+
+            <p class="text-blue-100 text-sm mt-1">Práctica Calificada 3</p>
+          </div>
+
+
+          <div class="text-center md:text-right">
+            <p class="font-semibold mb-2">Integrantes</p>
+
+            <ul class="text-blue-100 text-sm space-y-1">
+              <li>Richard Favio Asturimac Medina</li>
+              <li>Brittany Gonzales Quiñones</li>
+              <li>Jhojan Antezana Villegas</li>
+              <li>Edilson Roberto Camargo Alvarado</li>
+            </ul>
+          </div>
+        </div>
+
+
+        <div class="border-t border-blue-500 my-6"></div>
+
+        <div
+          class="flex flex-col md:flex-row justify-between items-center gap-2 text-sm text-blue-100"
+        >
+          <p>Desarrollo de Aplicaciones Web</p>
+
+          <p>Facultad de Ingeniería de Sistemas · UNCP</p>
+        </div>
+      </div>
+    </footer>
+
     <script src="./script.js"></script>
-</body>
+  </body>
 </html>
