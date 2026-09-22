@@ -1,13 +1,22 @@
-const inicio = document.getElementById("inicio");
-const pantallaParte1 = document.getElementById("pantallaParte1");
-const pantallaParte2 = document.getElementById("pantallaParte2");
-const pantallaSorteo = document.getElementById("pantallaSorteo");
+const inicio = document.getElementById("inicio")
 
-const btnParte1 = document.getElementById("btnParte1");
-const btnParte2 = document.getElementById("btnParte2");
-const btnSorteo = document.getElementById("btnSorteo");
-const btnFullscreen = document.getElementById("btnFullscreen");
 
-const botonesVolver = document.querySelectorAll(".btnVolver");
+const btnParte1 = document.getElementById("btnParte1")
+const btnParte2 = document.getElementById("btnParte2")
 
+const btnFullscreen = document.getElementById("btnFullscreen")
+
+function irParte1() {
+    alert("Funciona parte 1")
+    //window.location.href = ""
+}
+
+function irParte2() {
+    alert("Funciona parte 2")
+    //window.location.href = ""
+}
+
+/* Asignación de funciones a botones */
+btnParte1.addEventListener("click", irParte1);
+btnParte2.addEventListener("click", irParte2);
 
