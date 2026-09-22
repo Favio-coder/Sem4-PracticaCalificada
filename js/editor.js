@@ -3,17 +3,12 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // ELEMENTOS DEL HTML
-
-
     const textarea = document.getElementById("listaElementos");
 
     if (!textarea) {
         console.warn("No se encontró el textarea #listaElementos");
         return;
     }
-
-    // CONFIGURACIÓN
 
     const CLAVE_LOCAL_STORAGE = "elementosRuleta";
 
@@ -408,7 +403,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.registrarElementoSeleccionado =
         registrarElementoSeleccionado;
 
-    // FUNCIONES PÚBLICAS DEL EDITOR
+    // FUNCIONES
 
     window.editorRuleta = {
 
