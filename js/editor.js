@@ -23,5 +23,30 @@ document.addEventListener("DOMContentLoaded", () => {
     // Último elemento seleccionado por la ruleta
     let ultimoElementoSeleccionado = null;
 
+    // F5 - GUARDAR DATOS EN LOCAL STORAGE
+    // ========================================================
 
+    function guardarDatos() {
+
+        localStorage.setItem(
+            CLAVE_LOCAL_STORAGE,
+            textarea.value
+        );
+
+        console.log("Datos guardados en localStorage");
+    }
+
+    // F5 - RECUPERAR DATOS DEL LOCAL STORAGE
+
+    function recuperarDatos() {
+
+        const datosGuardados =
+            localStorage.getItem(CLAVE_LOCAL_STORAGE);
+
+        if (datosGuardados !== null) {
+            textarea.value = datosGuardados;
+        }
+    }
+
+   
 });
