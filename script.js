@@ -8,7 +8,7 @@ const btnFullscreen = document.getElementById("btnFullscreen")
 
 function irParte1() {
     // alert("Funciona parte 1")
-    window.location.href = "/parte1/ruleta.html"
+    window.location.href = "/parte1/index.html"
 }
 
 function irParte2() {
