@@ -83,6 +83,83 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
     }
+    // F7 - REGISTRAR ÚLTIMO ELEMENTO SORTEADO
+
+    function registrarElementoSeleccionado(elemento) {
+
+        if (!elemento) {
+            return;
+        }
+
+        ultimoElementoSeleccionado = elemento.trim();
+
+        console.log(
+            "Último elemento sorteado:",
+            ultimoElementoSeleccionado
+        );
+    }
+
+    // F7 - OCULTAR ELEMENTO SORTEADO
+
+    function ocultarUltimoElemento() {
+
+        if (!ultimoElementoSeleccionado) {
+            console.warn("No existe un elemento sorteado.");
+            return;
+        }
+
+        if (!elementosOcultos.includes(ultimoElementoSeleccionado)) {
+
+            elementosOcultos.push(
+                ultimoElementoSeleccionado
+            );
+        }
+
+        actualizarElementosDisponibles();
+
+        console.log(
+            "Elemento ocultado:",
+            ultimoElementoSeleccionado
+        );
+    }
+
+    // F7 - ACTUALIZAR ELEMENTOS DISPONIBLES
+
+    function actualizarElementosDisponibles() {
+
+        const elementos = obtenerElementos();
+
+        const elementosDisponibles = elementos.filter(
+            elemento =>
+                !elementosOcultos.includes(elemento)
+        );
+
+
+        if (typeof window.actualizarRuleta === "function") {
+
+            window.actualizarRuleta(
+                elementosDisponibles
+            );
+
+        } else {
+
+            document.dispatchEvent(
+                new CustomEvent("elementosRuletaActualizados", {
+                    detail: {
+                        elementos: elementosDisponibles
+                    }
+                })
+            );
+        }
+    }
+
+    // F7 - TECLA S
+
+    function procesarTeclaS() {
+
+        ocultarUltimoElemento();
+    }
+
 
    
 });
