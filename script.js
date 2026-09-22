@@ -8,12 +8,12 @@ const btnFullscreen = document.getElementById("btnFullscreen")
 
 function irParte1() {
     // alert("Funciona parte 1")
-    window.location.href = "/parte1/index.html"
+    window.location.href = "./parte1/index.html"
 }
 
 function irParte2() {
     //alert("Funciona parte 2")
-    window.location.href = "/parte2/sorteo.html"
+    window.location.href = "./parte2/sorteo.html"
 }
 
 /* Asignación de funciones a botones */
