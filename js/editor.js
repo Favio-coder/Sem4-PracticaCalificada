@@ -229,5 +229,208 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
         }
     }
+
+    
+
+    // ========================================================
+    // F7 - REGISTRAR ÚLTIMO ELEMENTO SORTEADO
+    // ========================================================
+
+    function registrarElementoSeleccionado(elemento) {
+
+        if (!elemento) {
+            return;
+        }
+
+        ultimoElementoSeleccionado = elemento.trim();
+
+        console.log(
+            "Último elemento sorteado:",
+            ultimoElementoSeleccionado
+        );
+    }
+
+    // ========================================================
+    // F7 - OCULTAR ELEMENTO SORTEADO
+    // ========================================================
+
+    function ocultarUltimoElemento() {
+
+        if (!ultimoElementoSeleccionado) {
+            console.warn("No existe un elemento sorteado.");
+            return;
+        }
+
+        if (!elementosOcultos.includes(ultimoElementoSeleccionado)) {
+
+            elementosOcultos.push(
+                ultimoElementoSeleccionado
+            );
+        }
+
+        actualizarElementosDisponibles();
+
+        console.log(
+            "Elemento ocultado:",
+            ultimoElementoSeleccionado
+        );
+    }
+
+    // ========================================================
+    // F7 - ACTUALIZAR ELEMENTOS DISPONIBLES
+    // ========================================================
+
+    function actualizarElementosDisponibles() {
+
+        const elementos = obtenerElementos();
+
+        const elementosDisponibles = elementos.filter(
+            elemento =>
+                !elementosOcultos.includes(elemento)
+        );
+
+        /*
+         * Se envían solamente los elementos disponibles
+         * a la ruleta.
+         */
+
+        if (typeof window.actualizarRuleta === "function") {
+
+            window.actualizarRuleta(
+                elementosDisponibles
+            );
+
+        } else {
+
+            document.dispatchEvent(
+                new CustomEvent("elementosRuletaActualizados", {
+                    detail: {
+                        elementos: elementosDisponibles
+                    }
+                })
+            );
+        }
+    }
+
+    // ========================================================
+    // F7 - TECLA S
+    // ========================================================
+
+    function procesarTeclaS() {
+
+        ocultarUltimoElemento();
+    }
+
+    
+
+    // F5 - RECUPERAR DATOS AL CARGAR
+
+    recuperarDatos();
+
+    // F6 - DETECTAR CAMBIOS DEL TEXTAREA
+
+    textarea.addEventListener("input", () => {
+
+        actualizarRuletaDesdeEditor();
+
+    });
+
+    // F8 - CLICK EN TEXTAREA
+
+    textarea.addEventListener("click", () => {
+
+        habilitarEdicion();
+
+    });
+
+    // ATAJOS DE TECLADO
+
+    document.addEventListener("keydown", event => {
+
+        /*No ejecutar los atajos cuando el usuario cuando se escribe*/
+
+        const elementoActivo = document.activeElement;
+
+        const estaEditando =
+            elementoActivo === textarea;
+
+        // E - HABILITAR EDICIÓN
+
+        if (event.key.toLowerCase() === "e") {
+
+            habilitarEdicion();
+
+            return;
+        }
+
+        // S - OCULTAR ÚLTIMO SORTEADO
+
+        if (
+            event.key.toLowerCase() === "s" &&
+            !estaEditando
+        ) {
+
+            event.preventDefault();
+
+            procesarTeclaS();
+
+            return;
+        }
+
+        // R - REINICIAR
+
+        if (
+            event.key.toLowerCase() === "r" &&
+            !estaEditando
+        ) {
+
+            event.preventDefault();
+
+            reiniciarRuleta();
+
+            return;
+        }
+
+        // F - PANTALLA COMPLETA
+
+        if (
+            event.key.toLowerCase() === "f" &&
+            !estaEditando
+        ) {
+
+            event.preventDefault();
+
+            activarPantallaCompleta();
+
+            return;
+        }
+
+    });
+
+    // FUNCIÓN PÚBLICA PARA EL ALUMNO
+
+    /* El código de ruleta.js podrá llamar al ganador.*/
+
+    window.registrarElementoSeleccionado =
+        registrarElementoSeleccionado;
+
+    // FUNCIONES PÚBLICAS DEL EDITOR
+
+    window.editorRuleta = {
+
+        guardarDatos,
+        recuperarDatos,
+        obtenerElementos,
+        actualizarRuletaDesdeEditor,
+        registrarElementoSeleccionado,
+        ocultarUltimoElemento,
+        reiniciarRuleta,
+        habilitarEdicion,
+        activarPantallaCompleta
+
+    };
+
+    console.log("Editor de ruleta cargado correctamente.");
+
    
 });
