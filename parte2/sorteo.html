@@ -2,52 +2,455 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Prueba local — js/sorteo.js (Alumno 4)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorteo de Equipos</title>
 <style>
-  body{ font-family: Segoe UI, Arial, sans-serif; max-width: 720px; margin: 40px auto; color:#1c1b29; }
-  textarea{ width:100%; height:160px; }
-  .oculta{ display:none; }
-  .activa{ display:block; }
-  .tarjeta-equipo{ border:1px solid #ccc; border-radius:8px; padding:10px 14px; margin:10px 0; }
-  .subtitulo-equipo{ font-weight:bold; color:#9c1560; }
-  .lista-integrantes{ list-style:none; padding:0; }
-  .lista-integrantes li{ padding:4px 0; }
-  .error{ color:#b3261e; font-size:13px; }
-  button{ cursor:pointer; padding:8px 14px; }
+  :root{
+    --tinta: #1c1b29;
+    --tinta-suave: #5a5870;
+    --lienzo: #eef0f7;
+    --tarjeta: #ffffff;
+    --borde: #dcdfec;
+    --acento: #c81d78;
+    --acento-oscuro: #9c1560;
+    --acento-claro: #fbe6f1;
+    --exito: #1e9e78;
+    --sombra: 0 10px 30px rgba(28,27,41,0.08);
+    --radio: 14px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    background: var(--lienzo);
+    color: var(--tinta);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    min-height:100vh;
+  }
+
+  .envoltorio{
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .cabecera{ margin-bottom: 28px; }
+
+  .cabecera .rotulo{
+    display:inline-block;
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    color: var(--acento-oscuro);
+    background: var(--acento-claro);
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+
+  .cabecera h1{
+    font-size: 30px;
+    margin: 0 0 8px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .cabecera p{
+    margin:0;
+    color: var(--tinta-suave);
+    font-size: 15.5px;
+    max-width: 60ch;
+    line-height: 1.5;
+  }
+
+  /* ---------- PANTALLA 1: CONFIGURACION ---------- */
+
+  .tarjeta{
+    background: var(--tarjeta);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    padding: 32px;
+  }
+
+  .rejilla-config{
+    display:grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 36px;
+  }
+
+  @media (max-width: 720px){
+    .rejilla-config{ grid-template-columns: 1fr; }
+  }
+
+  .bloque h2{
+    font-size: 14.5px;
+    font-weight: 700;
+    margin: 0 0 12px;
+  }
+
+  .contenedor-textarea{ position:relative; }
+
+  textarea#areaParticipantes{
+    width:100%;
+    height: 260px;
+    resize: vertical;
+    padding: 14px 16px 30px;
+    border-radius: 10px;
+    border: 1.5px solid var(--acento);
+    font-size: 14.5px;
+    font-family: inherit;
+    line-height: 1.65;
+    color: var(--tinta);
+    outline: none;
+    background: #fffdfe;
+  }
+
+  textarea#areaParticipantes:focus{
+    box-shadow: 0 0 0 3px var(--acento-claro);
+  }
+
+  .contador-participantes{
+    position:absolute;
+    right: 12px;
+    bottom: 12px;
+    background: var(--acento-claro);
+    color: var(--acento-oscuro);
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+
+  .ayuda-textarea{
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: var(--tinta-suave);
+  }
+
+  .aviso-limite{
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: #b3261e;
+    min-height: 16px;
+  }
+
+  .opciones-modo{
+    display:flex;
+    gap: 20px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .opcion-radio{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    font-size: 14px;
+    cursor:pointer;
+  }
+
+  .opcion-radio input{
+    accent-color: var(--acento);
+    width: 16px;
+    height:16px;
+    cursor:pointer;
+  }
+
+  select#selectorCantidad,
+  input#tituloEquipos{
+    width:100%;
+    padding: 11px 14px;
+    border-radius: 10px;
+    border: 1.5px solid var(--borde);
+    font-size: 14.5px;
+    font-family: inherit;
+    color: var(--tinta);
+    background: #fff;
+    outline: none;
+  }
+
+  select#selectorCantidad:focus,
+  input#tituloEquipos:focus{
+    border-color: var(--acento);
+    box-shadow: 0 0 0 3px var(--acento-claro);
+  }
+
+  .bloque + .bloque{ margin-top: 26px; }
+
+  .fila-acciones{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    gap: 20px;
+    margin-top: 30px;
+    padding-top: 24px;
+    border-top: 1px solid var(--borde);
+  }
+
+  .boton{
+    border:none;
+    cursor:pointer;
+    font-family: inherit;
+    font-size: 14.5px;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 12px 22px;
+    transition: transform .12s ease, background .15s ease, box-shadow .15s ease;
+  }
+
+  .boton:active{ transform: translateY(1px); }
+
+  .boton-primario{
+    background: var(--acento);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(200,29,120,0.32);
+  }
+  .boton-primario:hover{ background: var(--acento-oscuro); }
+  .boton-primario:disabled{
+    background:#cfcfe0; box-shadow:none; cursor:not-allowed;
+  }
+
+  .boton-fantasma{
+    background: transparent;
+    color: var(--acento-oscuro);
+    padding: 12px 10px;
+  }
+  .boton-fantasma:hover{ text-decoration: underline; }
+
+  .boton-secundario{
+    background:#fff;
+    color: var(--tinta);
+    border: 1.5px solid var(--borde);
+  }
+  .boton-secundario:hover{ border-color: var(--acento); color: var(--acento-oscuro); }
+
+  .mensaje-error{
+    font-size: 13px;
+    color:#b3261e;
+    margin-top: 10px;
+    min-height: 18px;
+  }
+
+  /* ---------- PANTALLA 2: RESULTADOS ---------- */
+
+  .pantalla-resultados{ display:none; }
+  .pantalla-resultados.activa{ display:block; }
+  .pantalla-config.oculta{ display:none; }
+
+  .encabezado-resultados{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .encabezado-resultados h2{
+    font-size: 24px;
+    margin: 0 0 4px;
+  }
+
+  .encabezado-resultados .subtitulo-resultados{
+    color: var(--tinta-suave);
+    font-size: 14px;
+    margin:0;
+  }
+
+  #lienzoResultados{
+    background: var(--tarjeta);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    padding: 32px;
+  }
+
+  .titulo-sorteo-render{
+    text-align:center;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 26px;
+    color: var(--acento-oscuro);
+  }
+
+  .rejilla-equipos{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+  }
+
+  .tarjeta-equipo{
+    border: 1.5px solid var(--borde);
+    border-radius: 12px;
+    padding: 18px 18px 20px;
+    background: #fbfbfd;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: aparecerEquipo .45s ease forwards;
+  }
+
+  @keyframes aparecerEquipo{
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  .tarjeta-equipo .subtitulo-equipo{
+    font-size: 12.5px;
+    font-weight: 700;
+    text-transform: none;
+    color: var(--acento-oscuro);
+    background: var(--acento-claro);
+    display:inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+
+  .lista-integrantes{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap: 8px;
+    min-height: 20px;
+  }
+
+  .lista-integrantes li{
+    font-size: 14.5px;
+    padding: 8px 10px;
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    opacity: 0;
+    transform: translateX(-6px);
+    animation: aparecerIntegrante .3s ease forwards;
+  }
+
+  @keyframes aparecerIntegrante{
+    to{ opacity:1; transform: translateX(0); }
+  }
+
+  .fila-acciones-resultado{
+    display:flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+  }
+
+  .estado-copiado{
+    display:inline-block;
+    margin-left: 10px;
+    font-size: 13px;
+    color: var(--exito);
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity .2s ease;
+  }
+  .estado-copiado.visible{ opacity: 1; }
+
+  .fila-volver{
+    margin-top: 18px;
+    text-align:center;
+  }
+
+  @media (max-width: 560px){
+    .envoltorio{ padding: 28px 16px 60px; }
+    .tarjeta, #lienzoResultados{ padding: 22px; }
+    .fila-acciones{ flex-direction: column-reverse; align-items:stretch; }
+    .boton{ width:100%; text-align:center; }
+    .boton-fantasma{ text-align:center; }
+  }
 </style>
 </head>
 <body>
 
-<h2>Prueba aislada de js/sorteo.js — Alumno 4</h2>
-<p>Esto NO es el index.html final del equipo, solo replica los IDs del contrato para probar tu lógica sin depender de tus compañeros.</p>
+<div class="envoltorio">
 
-<section id="pantallaConfiguracionSorteo">
-  <h3>1. Participantes</h3>
-  <textarea id="areaParticipantes" placeholder="Un nombre por línea"></textarea>
-  <p>Contador: <span id="contadorParticipantes">0</span></p>
-  <p class="error" id="avisoLimiteSorteo"></p>
+  <div class="cabecera">
+    <span class="rotulo">Aula virtual · Sorteo de equipos</span>
+    <h1>Forma equipos al azar</h1>
+    <p>Escribe la lista de participantes, elige cómo dividir el sorteo y genera los equipos de forma aleatoria.</p>
+  </div>
 
-  <h3>2. Modo</h3>
-  <label><input type="radio" name="modo" id="modoCantidadEquipos" checked> Cantidad de equipos</label>
-  <label><input type="radio" name="modo" id="modoParticipantesPorEquipo"> Participantes por equipo</label>
-  <br><br>
-  <select id="selectorCantidadEquipos"></select>
-  <br><br>
-  <input type="text" id="tituloEquipos" placeholder="Título del sorteo">
+  <!-- ============ PANTALLA 1: CONFIGURACION ============ -->
+  <section class="pantalla-config" id="pantallaConfiguracion">
+    <div class="tarjeta">
+      <div class="rejilla-config">
 
-  <p class="error" id="mensajeErrorSorteo"></p>
+        <div class="bloque">
+          <h2>1. Ingresa los participantes</h2>
+          <div class="contenedor-textarea">
+            <textarea id="areaParticipantes" placeholder="Cada participante debe estar en una nueva línea" maxlength="6000"></textarea>
+            <span class="contador-participantes" id="contadorParticipantes">0</span>
+          </div>
+          <p class="ayuda-textarea">Hasta 100 participantes, 50 caracteres por línea.</p>
+          <p class="aviso-limite" id="avisoLimite"></p>
+        </div>
 
-  <br>
-  <button id="botonLimpiarSorteo" type="button">Limpiar</button>
-  <button id="botonGenerarEquipos" type="button">Generar equipos</button>
-</section>
+        <div class="bloque">
+          <h2>2. Cómo dividir</h2>
+          <div class="opciones-modo">
+            <label class="opcion-radio">
+              <input type="radio" name="modoDivision" id="modoCantidadEquipos" value="cantidadEquipos" checked>
+              Cantidad de equipos
+            </label>
+            <label class="opcion-radio">
+              <input type="radio" name="modoDivision" id="modoParticipantesPorEquipo" value="participantesPorEquipo">
+              Participantes por equipo
+            </label>
+          </div>
+          <select id="selectorCantidad"></select>
 
-<section id="pantallaResultadosSorteo" class="oculta">
-  <h3 id="tituloRenderizadoSorteo"></h3>
-  <p id="subtituloResultadosSorteo"></p>
-  <div id="rejillaEquiposSorteo"></div>
-  <button id="botonVolverSorteo" type="button">← Volver</button>
-</section>
+          <div class="bloque">
+            <h2>3. Título</h2>
+            <input type="text" id="tituloEquipos" placeholder="Ej: Proyecto final - Grupo A" maxlength="60">
+          </div>
+        </div>
+
+      </div>
+
+      <p class="mensaje-error" id="mensajeError"></p>
+
+      <div class="fila-acciones">
+        <button class="boton boton-fantasma" id="botonLimpiar" type="button">Limpiar</button>
+        <button class="boton boton-primario" id="botonGenerar" type="button">Generar equipos</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PANTALLA 2: RESULTADOS ============ -->
+  <section class="pantalla-resultados" id="pantallaResultados">
+    <div class="encabezado-resultados">
+      <div>
+        <h2>Equipos generados</h2>
+        <p class="subtitulo-resultados" id="subtituloResultados"></p>
+      </div>
+    </div>
+
+    <div id="lienzoResultados">
+      <p class="titulo-sorteo-render" id="tituloRenderizado"></p>
+      <div class="rejilla-equipos" id="rejillaEquipos"></div>
+    </div>
+
+    <div class="fila-acciones-resultado">
+      <button class="boton boton-secundario" id="botonDescargarJpg" type="button">Descargar como JPG</button>
+      <button class="boton boton-secundario" id="botonCopiarPortapapeles" type="button">Copiar al portapapeles</button>
+      <button class="boton boton-secundario" id="botonCopiarColumnas" type="button">Copiar en columnas</button>
+    </div>
+    <p style="text-align:center;">
+      <span class="estado-copiado" id="estadoCopiado">Copiado ✓</span>
+    </p>
+
+    <div class="fila-volver">
+      <button class="boton boton-fantasma" id="botonVolver" type="button">← Editar participantes</button>
+    </div>
+  </section>
+
+</div>
 
 <script src="sorteo.js"></script>
 </body>
