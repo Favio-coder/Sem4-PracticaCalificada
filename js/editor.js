@@ -48,5 +48,41 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+     // F6 - OBTENER ELEMENTOS DEL TEXTAREA
+
+    function obtenerElementos() {
+
+        return textarea.value
+            .split("\n")
+            .map(elemento => elemento.trim())
+            .filter(elemento => elemento !== "");
+    }
+
+    // F6 - ACTUALIZAR LA RULETA
+
+    function actualizarRuletaDesdeEditor() {
+
+        guardarDatos();
+
+        const elementos = obtenerElementos();
+
+        /*el nombre de su función podremos reemplazar esta llamada por el nombre exacto */
+
+        if (typeof window.actualizarRuleta === "function") {
+
+            window.actualizarRuleta(elementos);
+
+        } else {
+
+            document.dispatchEvent(
+                new CustomEvent("datosRuletaActualizados", {
+                    detail: {
+                        elementos: elementos
+                    }
+                })
+            );
+        }
+    }
+
    
 });
